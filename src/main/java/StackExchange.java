@@ -6,6 +6,7 @@ import java.net.URI;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
 
+
 public class StackExchange implements Searchable {
     private static final String SEARCH_ENDPOINT = "/search/advanced";
     private static final String ANSWERS_ENDPOINT = "/answers/endpoint";
@@ -60,9 +61,6 @@ public class StackExchange implements Searchable {
             throw new IllegalStateException("Invalid Request...");
         }
 
-        if (request == null) {
-            throw new IllegalStateException("Invalid Request... null");
-        }
 
         return request;
 
