@@ -1,21 +1,13 @@
 import com.google.gson.Gson;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.URI;
-import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
+import java.util.stream.Collectors;
 
 
 public class StackExchange implements Searchable {
     private static final String SEARCH_ENDPOINT = "/search/advanced";
-    private static final String ANSWERS_ENDPOINT = "/answers/endpoint";
+    private static final String ANSWERS_ENDPOINT = "/answers";
 
     private final String version;
     private final String url;
@@ -52,8 +44,8 @@ public class StackExchange implements Searchable {
 
     private StackExchangeResponse getAnswers(List<String> ids, HashMap<String, String> params) {
         String commaDelimitedIds = String.join(";", ids);
-        StackExchangeResponse answersResponse = this.getRequest(this.getAnswersUrl(),
-                params);
+        String url = this.getAnswersUrl() + "/" + commaDelimitedIds;
+        StackExchangeResponse answersResponse = this.getRequest(url, params);
 
         return answersResponse;
     }
@@ -66,9 +58,29 @@ public class StackExchange implements Searchable {
         return answersUrl;
     }
 
+    // TODO: Should this take the search builder? Abstraction needs work.
     @Override
     public void search(String query) {
+        var searchParams = new HashMap<String, String>() {{
+            put("site", "stackoverflow");
+            put("accepted", "True");
+            put("q", query);
+            put("filter", "withbody");
+        }};
 
+        StackExchangeResponse questions = this.getSearchAdvanced(searchParams);
+        List<String> acceptedAnswerIds = questions.items
+                .stream()
+                .map(q -> Integer.toString(q.accepted_answer_id))
+                .collect(Collectors.toList());
+
+        var answerParams = new HashMap<String, String>() {{
+            put("site", "stackoverflow");
+            put("filter", "withbody");
+        }};
+
+        StackExchangeResponse answers = this.getAnswers(acceptedAnswerIds, answerParams);
+        System.out.println("DEBUG");
     }
 
 
@@ -94,10 +106,11 @@ class Owner {
 class Item {
     public Owner owner;
     public boolean is_accepted;
+    public String body;
     public int score;
     public int last_activity_date;
     public int creation_date;
-    public int answer_id;
+    public int accepted_answer_id;
     public int question_id;
     public String content_license;
 }

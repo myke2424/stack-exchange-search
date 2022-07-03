@@ -9,6 +9,6 @@ public class Main {
                 .build();
 
         StackExchange stackExchange = new StackExchange();
-        stackExchange.testRequest("Merge two dicts");
+        stackExchange.search("Recursion limit");
     }
 }
