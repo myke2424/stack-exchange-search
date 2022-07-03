@@ -19,18 +19,51 @@ public class StackExchange implements Searchable {
 
     private final String version;
     private final String url;
+
+
     private final String searchUrl;
     private final String answersUrl;
+    private final Http http;
 
     public StackExchange(String version) {
         this.version = version;
         this.url = "https://api.stackexchange.com/" + version;
         this.searchUrl = url + SEARCH_ENDPOINT;
         this.answersUrl = url + ANSWERS_ENDPOINT;
+        this.http = new Http(); // IDK about this as an instance variable..
     }
 
     public StackExchange() {
         this("2.3");
+    }
+
+    private StackExchangeResponse getRequest(String url, HashMap<String, String> params) {
+        String response = this.http.get(url, params);
+        StackExchangeResponse stackExchangeResponse = new Gson().fromJson(response,
+                StackExchangeResponse.class);
+
+        return stackExchangeResponse;
+    }
+
+    private StackExchangeResponse getSearchAdvanced(HashMap<String, String> params) {
+        StackExchangeResponse searchResponse = this.getRequest(this.getSearchUrl(), params);
+        return searchResponse;
+    }
+
+    private StackExchangeResponse getAnswers(List<String> ids, HashMap<String, String> params) {
+        String commaDelimitedIds = String.join(";", ids);
+        StackExchangeResponse answersResponse = this.getRequest(this.getAnswersUrl(),
+                params);
+
+        return answersResponse;
+    }
+
+    public String getSearchUrl() {
+        return searchUrl;
+    }
+
+    public String getAnswersUrl() {
+        return answersUrl;
     }
 
     @Override
@@ -38,80 +71,7 @@ public class StackExchange implements Searchable {
 
     }
 
-    // TODO: Should the Http client be behind an interface... and injected in constructor?
-    private HttpRequest getRequest(String url, HashMap<String, String> queryParams) {
-        String uri = url + "?";
-        int i = 0;
-        int mapSize = queryParams.size();
 
-        // Manually construct uri with query params...
-        for (var entry : queryParams.entrySet()) {
-            uri += (entry.getKey() + "=" + entry.getValue().replaceAll("\\s+", ""));
-            if (i < mapSize - 1) {
-                uri += "&";
-            }
-            i++;
-        }
-
-        System.out.println("URI: " + uri);
-
-        HttpRequest request;
-        try {
-            request = HttpRequest.newBuilder()
-                    .uri(new URI(uri))
-                    .GET()
-                    .build();
-
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-            throw new IllegalStateException("Invalid Request...");
-        }
-
-        return request;
-    }
-
-    private StackResponse sendRequest(HttpRequest request) {
-        HttpClient client = HttpClient.newHttpClient();
-
-        HttpResponse<InputStream> response = null;
-        try {
-            response = client.send(request,
-                    HttpResponse.BodyHandlers.ofInputStream());
-
-            var gzipResponse = new GZIPInputStream(response.body());
-
-            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            byte[] buffer = new byte[4096];
-            int length;
-            while ((length = gzipResponse.read(buffer)) > 0) {
-                outStream.write(buffer, 0, length);
-            }
-
-            String bytesResponse = new String(outStream.toByteArray(), "UTF-8");
-            StackResponse stackResponse = new Gson().fromJson(bytesResponse,
-                    StackResponse.class);
-
-            return stackResponse;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
-        return null;
-    }
-
-    public void testRequest(String query) {
-        var params = new HashMap<String, String>();
-        params.put("q", query);
-        params.put("accepted", "true");
-        params.put("site", "stackoverflow");
-        var req = this.getRequest(this.searchUrl, params);
-        var stackResp = sendRequest(req);
-        System.out.println("TESTING");
-    }
 }
 
 class ErrorResponse {
@@ -143,7 +103,7 @@ class Item {
 }
 
 
-class StackResponse {
+class StackExchangeResponse {
     public List<Item> items;
     public int quota_remaining;
     public int quota_max;
