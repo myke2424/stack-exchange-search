@@ -86,6 +86,10 @@ public class StackExchange implements Searchable {
 
 }
 
+// TODO: Move data classes into a model directory!?
+// TODO: Move stack exchange class to API dir?
+// Cach
+
 class ErrorResponse {
     public Integer error_id;
     public String error_message;
