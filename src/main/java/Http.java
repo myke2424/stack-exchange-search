@@ -7,11 +7,14 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
+import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
 // TODO: Should the Http client be behind an interface... and injected in constructor?
 // No need to hide this behind an interface, stdlib http client is good.
 public class Http {
+    private static final Logger LOGGER = Logger.getLogger(Http.class.getName());
+
     private HttpClient client;
 
     public Http() {
@@ -39,6 +42,8 @@ public class Http {
     // Maybe add headers? We don't need them for stackexchange API however.
     private HttpRequest buildRequest(String url, HashMap<String, String> params) throws URISyntaxException {
         String uri = this.buildURI(url, params);
+        LOGGER.info(String.format("Making request to URI: %s", uri));
+
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI(uri))
                 .GET()
