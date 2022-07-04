@@ -1,5 +1,8 @@
 import redis.clients.jedis.Jedis;
 
+import java.util.logging.Logger;
+
+
 public interface Cache {
     public String get(String key);
 
@@ -8,6 +11,7 @@ public interface Cache {
 
 
 class RedisCache implements Cache {
+    private static final Logger LOGGER = Logger.getLogger(RedisCache.class.getName());
 
     private final String host;
     private final int port;
@@ -26,12 +30,15 @@ class RedisCache implements Cache {
 
     @Override
     public String get(String key) {
+        LOGGER.info("Reading cache - key: " + key);
         String cachedValue = this.db.get(key);
         return cachedValue;
     }
 
     @Override
     public void set(String key, String value) {
+        LOGGER.info(String.format("Writing to cache - key: %s | value: %s", key,
+                value));
         this.db.set(key, value);
     }
 }
