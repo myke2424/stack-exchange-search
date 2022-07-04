@@ -1,3 +1,3 @@
 public interface Searchable {
-    public void search(String query);
+    public String search(String query);
 }

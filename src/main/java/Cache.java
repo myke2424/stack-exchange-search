@@ -12,7 +12,7 @@ class RedisCache implements Cache {
     private final String host;
     private final int port;
     private final String password;
-    private Jedis db;
+    private final Jedis db;
 
 
     public RedisCache(String host, int port, String password) {

@@ -60,7 +60,7 @@ public class StackExchange implements Searchable {
 
     // TODO: Should this take the search builder? Abstraction needs work.
     @Override
-    public void search(String query) {
+    public String search(String query) {
         var searchParams = new HashMap<String, String>() {{
             put("site", "stackoverflow");
             put("accepted", "True");
@@ -81,9 +81,29 @@ public class StackExchange implements Searchable {
 
         StackExchangeResponse answers = this.getAnswers(acceptedAnswerIds, answerParams);
         System.out.println("DEBUG");
+
+        // TODO: Change the return result later
+        return "test";
     }
 
 
+}
+
+class CachedStackExchange implements Searchable {
+    //  Proxy structural design pattern. Use a cache as a proxy object to set and get search results for faster look up time.
+    private final Cache cache;
+    private final StackExchange service;
+
+    public CachedStackExchange(Cache cache, StackExchange service) {
+        this.cache = cache;
+        this.service = service;
+    }
+
+    // Search interface will be the same as the service interface
+    @Override
+    public String search(String query) {
+        return "";
+    }
 }
 
 // TODO: Move data classes into a model directory!?
