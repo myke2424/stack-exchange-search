@@ -4,9 +4,8 @@ import java.util.logging.Logger;
 
 
 public interface Cache {
-    public String get(String key);
-
-    public void set(String key, String value);
+    String get(String key);
+    void set(String key, String value);
 }
 
 

@@ -1,5 +1,6 @@
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +30,14 @@ public class StackExchange implements Searchable {
         this("2.3");
     }
 
+    public String getSearchUrl() {
+        return searchUrl;
+    }
+
+    public String getAnswersUrl() {
+        return answersUrl;
+    }
+
     private StackExchangeResponse getRequest(String url, HashMap<String, String> params) {
         String response = this.http.get(url, params);
         StackExchangeResponse stackExchangeResponse = new Gson().fromJson(response,
@@ -50,40 +59,58 @@ public class StackExchange implements Searchable {
         return answersResponse;
     }
 
-    public String getSearchUrl() {
-        return searchUrl;
+    private List<Answer> getAcceptedAnswers(List<String> ids, String site) {
+        var params = new HashMap<String, String>() {
+            {
+                put("site", site);
+                put("filter", "withbody");
+            }
+        };
+
+        StackExchangeResponse answersResponse = this.getAnswers(ids, params);
+        List<Answer> answers = answersResponse.items
+                .stream()
+                .map(item -> new Answer(item))
+                .collect(Collectors.toList());
+
+        return answers;
+
     }
 
-    public String getAnswersUrl() {
-        return answersUrl;
+    private List<Question> getQuestions(HashMap<String, String> searchParams, int num) {
+        StackExchangeResponse searchResponse = this.getSearchAdvanced(searchParams);
+
+        List<Question> questions = searchResponse.items
+                .stream()
+                .map(item -> new Question(item))
+                .collect(Collectors.toList());
+        return questions;
     }
 
     // TODO: Should this take the search builder? Abstraction needs work.
     @Override
-    public String search(String query) {
+    public List<SearchResult> search(String query, String site, int num) {
         var searchParams = new HashMap<String, String>() {{
-            put("site", "stackoverflow");
+            put("site", site);
             put("accepted", "True");
             put("q", query);
             put("filter", "withbody");
         }};
 
-        StackExchangeResponse questions = this.getSearchAdvanced(searchParams);
-        List<String> acceptedAnswerIds = questions.items
+        List<Question> questions = this.getQuestions(searchParams, num);
+        List<String> acceptedAnswerIds = questions
                 .stream()
-                .map(q -> Integer.toString(q.accepted_answer_id))
+                .map(q -> q.accepted_answer_id)
                 .collect(Collectors.toList());
+        List<Answer> answers = this.getAcceptedAnswers(acceptedAnswerIds, site);
 
-        var answerParams = new HashMap<String, String>() {{
-            put("site", "stackoverflow");
-            put("filter", "withbody");
-        }};
+        List<SearchResult> searchResults = new ArrayList<>();
 
-        StackExchangeResponse answers = this.getAnswers(acceptedAnswerIds, answerParams);
-        System.out.println("DEBUG");
+        for (int i = 0; i < answers.size(); i++) {
+            searchResults.add(new SearchResult(questions.get(i), answers.get(i)));
+        }
 
-        // TODO: Change the return result later
-        return "test";
+        return searchResults;
     }
 
 
@@ -101,14 +128,16 @@ class CachedStackExchange implements Searchable {
 
     // Search interface will be the same as the service interface
     @Override
-    public String search(String query) {
-        return "";
+    public List<SearchResult> search(String query, String site, int num) {
+        return null;
     }
 }
 
 // TODO: Move data classes into a model directory!?
 // TODO: Move stack exchange class to API dir?
-// Cach
+// TODO: Exclude fields in API response i don't need, i.e. owner, content_lincense etc.
+// TODO: Replace the classs with Records, records are analgous to data classes.
+
 
 class ErrorResponse {
     public Integer error_id;
@@ -134,8 +163,10 @@ class Item {
     public int score;
     public int last_activity_date;
     public int creation_date;
-    public int accepted_answer_id;
+    public String accepted_answer_id;
     public int question_id;
+    public String title;
+    public String link;
     public String content_license;
 }
 
@@ -146,4 +177,50 @@ class StackExchangeResponse {
     public int quota_max;
     public int backoff;
     public boolean has_more;
+}
+
+
+class SearchResultItem {
+    public String body;
+    public int score;
+    public String creation_date;
+
+    public SearchResultItem(String body, int score, int creation_date) {
+    }
+}
+
+class Question extends SearchResultItem {
+    public String title;
+    public String link;
+    public String accepted_answer_id;
+
+    public Question(Item item) {
+        super(item.body, item.score, item.creation_date);
+        this.title = item.title;
+        this.link = item.link;
+        this.accepted_answer_id = item.accepted_answer_id;
+    }
+}
+
+class Answer extends SearchResultItem {
+    public boolean is_accepted;
+
+
+    public Answer(Item item) {
+        super(item.body, item.score, item.creation_date);
+        this.is_accepted = item.is_accepted;
+    }
+}
+
+
+class SearchResult {
+    public Question question;
+    public Answer answer;
+
+    public SearchResult(Question question, Answer answer) {
+        this.question = question;
+        this.answer = answer;
+    }
+
+
 }

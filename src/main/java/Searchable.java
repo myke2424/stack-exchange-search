@@ -1,3 +1,5 @@
+import java.util.List;
+
 public interface Searchable {
-    public String search(String query);
+    List<SearchResult> search(String query, String site, int num);
 }
