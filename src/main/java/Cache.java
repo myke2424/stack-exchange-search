@@ -1,43 +1,23 @@
-import redis.clients.jedis.Jedis;
+import java.util.Optional;
 
-import java.util.logging.Logger;
-
-
+/**
+ * An interface for a cache keyed by a String with a byte array as data.
+ */
 public interface Cache {
-    String get(String key);
+    /**
+     * Retrieves an entry from the cache.
+     *
+     * @param key Cache key
+     * @return A String or null in the event of a cache miss
+     */
+    Optional<String> get(String key);
+
+    /**
+     * Adds or replaces an entry to the cache.
+     *
+     * @param key   Cache key
+     * @param value Data to store in the cache, associated by the key
+     */
     void set(String key, String value);
 }
 
-
-class RedisCache implements Cache {
-    private static final Logger LOGGER = Logger.getLogger(RedisCache.class.getName());
-
-    private final String host;
-    private final int port;
-    private final String password;
-    private final Jedis db;
-
-
-    public RedisCache(String host, int port, String password) {
-        this.host = host;
-        this.port = port;
-        this.password = password;
-        this.db = new Jedis(host, port);
-        this.db.auth(password);
-    }
-
-
-    @Override
-    public String get(String key) {
-        LOGGER.info("Reading cache - key: " + key);
-        String cachedValue = this.db.get(key);
-        return cachedValue;
-    }
-
-    @Override
-    public void set(String key, String value) {
-        LOGGER.info(String.format("Writing to cache - key: %s | value: %s", key,
-                value));
-        this.db.set(key, value);
-    }
-}
