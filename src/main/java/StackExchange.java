@@ -183,9 +183,12 @@ class StackExchangeResponse {
 class SearchResultItem {
     public String body;
     public int score;
-    public String creation_date;
+    public int creation_date;
 
     public SearchResultItem(String body, int score, int creation_date) {
+        this.body = body;
+        this.score = score;
+        this.creation_date = creation_date;
     }
 }
 

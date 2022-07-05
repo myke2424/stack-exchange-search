@@ -2,7 +2,7 @@
 # the number of requests will be throttled. Read more here: https://api.stackexchange.com/docs
 api:
   client_id: null
-  client_secret: nll
+  client_secret: null
   key: null
 
 # Optional fields - if you want request caching you can hook up the application to a redis DB.
