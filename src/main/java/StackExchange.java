@@ -3,6 +3,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -38,7 +39,7 @@ public class StackExchange implements Searchable {
         return answersUrl;
     }
 
-    private StackExchangeResponse getRequest(String url, HashMap<String, String> params) {
+    private StackExchangeResponse getRequest(String url, Map<String, String> params) {
         String response = this.http.get(url, params);
         StackExchangeResponse stackExchangeResponse = new Gson().fromJson(response,
                 StackExchangeResponse.class);
@@ -46,12 +47,12 @@ public class StackExchange implements Searchable {
         return stackExchangeResponse;
     }
 
-    private StackExchangeResponse getSearchAdvanced(HashMap<String, String> params) {
+    private StackExchangeResponse getSearchAdvanced(Map<String, String> params) {
         StackExchangeResponse searchResponse = this.getRequest(this.getSearchUrl(), params);
         return searchResponse;
     }
 
-    private StackExchangeResponse getAnswers(List<String> ids, HashMap<String, String> params) {
+    private StackExchangeResponse getAnswers(List<String> ids, Map<String, String> params) {
         String commaDelimitedIds = String.join(";", ids);
         String url = this.getAnswersUrl() + "/" + commaDelimitedIds;
         StackExchangeResponse answersResponse = this.getRequest(url, params);
@@ -60,7 +61,7 @@ public class StackExchange implements Searchable {
     }
 
     private List<Answer> getAcceptedAnswers(List<String> ids, String site) {
-        var params = new HashMap<String, String>() {
+        Map<String, String> params = new HashMap<String, String>() {
             {
                 put("site", site);
                 put("filter", "withbody");
@@ -77,7 +78,7 @@ public class StackExchange implements Searchable {
 
     }
 
-    private List<Question> getQuestions(HashMap<String, String> searchParams, int num) {
+    private List<Question> getQuestions(Map<String, String> searchParams, int num) {
         StackExchangeResponse searchResponse = this.getSearchAdvanced(searchParams);
 
         List<Question> questions = searchResponse.items
@@ -90,7 +91,7 @@ public class StackExchange implements Searchable {
     // TODO: Should this take the search builder? Abstraction needs work.
     @Override
     public List<SearchResult> search(String query, String site, int num) {
-        var searchParams = new HashMap<String, String>() {{
+        Map<String, String> searchParams = new HashMap<String, String>() {{
             put("site", site);
             put("accepted", "True");
             put("q", query);

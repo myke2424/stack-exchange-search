@@ -6,7 +6,7 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
@@ -22,7 +22,7 @@ public class Http {
     }
 
     // TODO: Should params be optional or generic hashmap/
-    private String buildURI(String url, HashMap<String, String> params) {
+    private String buildURI(String url, Map<String, String> params) {
         String uri = url + "?";
         int i = 0;
         int mapSize = params.size();
@@ -40,7 +40,7 @@ public class Http {
     }
 
     // Maybe add headers? We don't need them for stackexchange API however.
-    private HttpRequest buildRequest(String url, HashMap<String, String> params) throws URISyntaxException {
+    private HttpRequest buildRequest(String url, Map<String, String> params) throws URISyntaxException {
         String uri = this.buildURI(url, params);
         LOGGER.info(String.format("Making request to URI: %s", uri));
 
@@ -83,7 +83,7 @@ public class Http {
     }
 
 
-    public String get(String url, HashMap<String, String> params) {
+    public String get(String url, Map<String, String> params) {
         String response = null;
         try {
             HttpRequest request = this.buildRequest(url, params);
