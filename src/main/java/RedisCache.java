@@ -1,4 +1,6 @@
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.exceptions.JedisAccessControlException;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -6,20 +8,24 @@ import java.util.logging.Logger;
 class RedisCache implements Cache {
     private static final Logger LOGGER = Logger.getLogger(RedisCache.class.getName());
 
-    private final String host;
-    private final int port;
-    private final String password;
     private final Jedis db;
 
 
     public RedisCache(String host, int port, String password) {
-        this.host = host;
-        this.port = port;
-        this.password = password;
         this.db = new Jedis(host, port);
-        this.db.auth(password);
+        this.verifyConnection(password);
+
     }
 
+    private void verifyConnection(String password) {
+        try {
+            this.db.auth(password);
+        } catch (JedisConnectionException | JedisAccessControlException e) {
+            // TODO: Raise custom exception?
+            LOGGER.info("Failed to connect to redis DB... Exiting");
+            System.exit(1);
+        }
+    }
 
     @Override
     public Optional<String> get(String key) {

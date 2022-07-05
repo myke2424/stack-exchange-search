@@ -5,7 +5,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 
 import java.util.logging.Logger;
 
-public class Commands {
+public class CommandParser {
     private static final Logger LOGGER = Logger.getLogger(Http.class.getName());
 
     public static Namespace parseArgs(String[] args) {
@@ -17,7 +17,7 @@ public class Commands {
         parser.addArgument("-s", "--site").setDefault("stackoverflow").help("Stack " +
                 "exchange website used to search the query on - default=stackoverflow");
 
-        parser.addArgument("-t", "--tags").help("Tags used in stackexchange search");
+        parser.addArgument("-t", "--tags").help("Tags used in stack exchange search");
 
         parser.addArgument("-i", "--interactive").help("Interactive search flag, used " +
                 "to display search results and allow the user to interactive");
