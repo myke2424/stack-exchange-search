@@ -6,9 +6,12 @@ public class Main {
 
         var arguments = Commands.parseArgs(args);
 
-        Search search = new Search.Builder("Merge two dictionaries").site("stackoverflow").accepted().build();
+        SearchRequest request = new SearchRequest.Builder("Merge two dictionaries").site(
+                "stackoverflow").accepted().build();
 
         StackExchange stackExchange = new StackExchange();
         var sr = stackExchange.search("Recursion limit", "stackoverflow", 10);
+        System.out.println("YO");
+
     }
 }

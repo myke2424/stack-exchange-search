@@ -1,6 +1,6 @@
 import java.util.List;
 
-class Search {
+class SearchRequest {
     // required parameters
     private final String query;
 
@@ -10,7 +10,7 @@ class Search {
     private final String site;
     private final Boolean accepted;
 
-    private Search(Builder builder) {
+    private SearchRequest(Builder builder) {
         this.query = builder.query;
         this.tags = builder.tags;
         this.num = builder.num;
@@ -18,15 +18,6 @@ class Search {
         this.accepted = builder.accepted;
     }
 
-
-    // Creational Builder design pattern so the client code can build complex search
-    // objects without having an influx of overloaded search constructors
-    // Fluent api to construct a search object
-    // * EXAMPLE *
-    // Search search = new Search.Builder(query)
-    //                         .site("softwareengineering")
-    //                         .accepted()
-    //                         .build();
     public static class Builder {
         private final String query;
 
@@ -62,8 +53,8 @@ class Search {
             return this;
         }
 
-        public Search build() {
-            return new Search(this);
+        public SearchRequest build() {
+            return new SearchRequest(this);
         }
 
     }
