@@ -1,3 +1,5 @@
+package stackexchange;
+
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
@@ -19,7 +21,8 @@ public class CommandParser {
 
         parser.addArgument("-t", "--tags").help("Tags used in stack exchange search");
 
-        parser.addArgument("-i", "--interactive").help("Interactive search flag, used " +
+        parser.addArgument("-i", "--interactive").setDefault(false).help("Interactive " +
+            "search flag, used " +
                 "to display search results and allow the user to interactive");
 
         Namespace arguments = null;

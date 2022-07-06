@@ -1,3 +1,5 @@
+package stackexchange;
+
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileNotFoundException;

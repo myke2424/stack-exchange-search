@@ -1,11 +1,9 @@
+package stackexchange;
+
+import stackexchange.model.SearchResult;
+
+import java.util.List;
 import java.util.logging.Logger;
-
-
-//import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter;
-//import com.vladsch.flexmark.util.ast.Node;
-//import com.vladsch.flexmark.html.HtmlRenderer;
-//import com.vladsch.flexmark.parser.Parser;
-//import com.vladsch.flexmark.util.data.MutableDataSet;
 
 // TODO Create exceptions folder
 
@@ -13,33 +11,39 @@ public class Main {
     private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
+        var args_ = CommandParser.parseArgs(args);
+        var query = args_.getString("query");
+        var site = args_.getString("site");
+        var interactiveMode = args_.getBoolean("interactive");
 
-
-        var arguments = CommandParser.parseArgs(args);
-
-        SearchRequest request = new SearchRequest.Builder("Merge two dictionaries").site(
-                "stackoverflow").accepted().build();
+        SearchRequest request = new SearchRequest.Builder(query)
+                .site(site)
+                .accepted()
+                .num(10)
+                .build();
 
         StackExchange stackExchange = new StackExchange();
-        var sr = stackExchange.search("Recursion limit", "stackoverflow", 10);
-        System.out.println("A");
+        List<SearchResult> searchResults = stackExchange.search(request);
 
-        String htmlStr = sr.get(0).question.body;
+        if (interactiveMode) {
+            System.out.println("Implement Interactive Search");
+        } else {
+            // Fast search, get the top result
+            // TODO: Raise exception if no search RESULT!?
+            SearchResult topResult = searchResults.get(0);
+
+            System.out.println(String.format("***QUESTION***: %s \n",
+                    topResult.question.title));
+            System.out.println(topResult.question.body + "\n");
 
 
-//        MutableDataSet options = new MutableDataSet();
-//        String markdown = FlexmarkHtmlConverter.builder(options).build().convert(htmlStr);
-//        System.out.println(markdown);
+            System.out.println("***ANSWER*** \n \n" + topResult.answer.body);
+        }
 
 
-//
-//        Parser parser = Parser.builder(options).build();
-//        HtmlRenderer renderer = HtmlRenderer.builder(options).build();
-//
-//        // You can re-use parser and renderer instances
-//        Node document = parser.parse("This is *Sparta*");
-//        String html = renderer.render(document);  // "<p>This is <em>Sparta</em></p>\n"
-//        System.out.println(html);
+        System.out.println("Done");
+
+
     }
 
     public static void run() {
