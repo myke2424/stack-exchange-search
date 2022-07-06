@@ -1,6 +1,9 @@
-import model.SearchResult;
+package stackexchange;
+
+import stackexchange.model.SearchResult;
+
 import java.util.List;
 
 public interface Searchable {
-    List<SearchResult> search(String query, String site, int num);
+    List<SearchResult> search(SearchRequest request);
 }

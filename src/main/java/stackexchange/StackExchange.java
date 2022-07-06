@@ -1,8 +1,10 @@
+package stackexchange;
+
 import com.google.gson.Gson;
-import model.Answer;
-import model.Question;
-import model.SearchResult;
-import model.StackExchangeResponse;
+import stackexchange.model.Answer;
+import stackexchange.model.Question;
+import stackexchange.model.SearchResult;
+import stackexchange.model.StackExchangeResponse;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -86,7 +88,6 @@ public class StackExchange implements Searchable {
             System.exit(1);
         }
 
-        //String decompressedResponse = this.decompressGzip(response);
         StackExchangeResponse stackExchangeResponse =
                 new Gson().fromJson(decompressedResponse,
                         StackExchangeResponse.class);
@@ -131,26 +132,23 @@ public class StackExchange implements Searchable {
         List<Question> questions = searchResponse.items
                 .stream()
                 .map(item -> new Question(item))
+                .limit(num)
                 .collect(Collectors.toList());
         return questions;
     }
 
     // TODO: Should this take the search builder? Abstraction needs work.
     @Override
-    public List<SearchResult> search(String query, String site, int num) {
-        Map<String, String> searchParams = new HashMap<String, String>() {{
-            put("site", site);
-            put("accepted", "True");
-            put("q", query);
-            put("filter", "withbody");
-        }};
+    public List<SearchResult> search(SearchRequest request) {
+        Map<String, String> searchParams = request.toJsonMap();
 
-        List<Question> questions = this.getQuestions(searchParams, num);
+        List<Question> questions = this.getQuestions(searchParams, request.getNum());
         List<String> acceptedAnswerIds = questions
                 .stream()
                 .map(q -> q.accepted_answer_id)
                 .collect(Collectors.toList());
-        List<Answer> answers = this.getAcceptedAnswers(acceptedAnswerIds, site);
+        List<Answer> answers = this.getAcceptedAnswers(acceptedAnswerIds, request.getSite());
+
 
         List<SearchResult> searchResults = new ArrayList<>();
 

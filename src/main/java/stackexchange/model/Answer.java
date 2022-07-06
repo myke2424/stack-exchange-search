@@ -1,4 +1,4 @@
-package model;
+package stackexchange.model;
 
 public class Answer extends SearchResultItem {
     public boolean is_accepted;

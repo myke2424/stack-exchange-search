@@ -1,4 +1,4 @@
-package model;
+package stackexchange.model;
 
 import java.util.List;
 

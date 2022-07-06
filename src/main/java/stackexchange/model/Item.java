@@ -1,4 +1,4 @@
-package model;
+package stackexchange.model;
 
 public class Item {
     public boolean is_accepted;

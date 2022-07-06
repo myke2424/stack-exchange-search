@@ -1,4 +1,4 @@
-package model;
+package stackexchange.model;
 
 public class SearchResultItem {
     public String body;
