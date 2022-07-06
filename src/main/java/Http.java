@@ -55,10 +55,17 @@ public final class Http implements RequestSender {
     }
 
 
-    public HttpResponse get(String url, Map<String, String> params) throws IOException, InterruptedException, URISyntaxException {
-        HttpRequest request = this.buildRequest(url, params);
-        HttpResponse response = this.sendRequest(request,
-                HttpResponse.BodyHandlers.ofInputStream());
+    public HttpResponse get(String url, Map<String, String> params) {
+        HttpResponse response = null;
+        try {
+            HttpRequest request = this.buildRequest(url, params);
+            response = this.sendRequest(request, HttpResponse.BodyHandlers.ofInputStream());
+        } catch (Exception e) {
+            System.out.println("FAILED TO MAKE REQUEST");
+            System.out.println(e.getMessage());
+            System.exit(1);
+        }
+
 
         return response;
     }

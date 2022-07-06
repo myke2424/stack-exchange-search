@@ -7,7 +7,6 @@ import model.StackExchangeResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,11 +75,17 @@ public class StackExchange implements Searchable {
         return bytes;
     }
 
-    private StackExchangeResponse getRequest(String url, Map<String, String> params) throws IOException, URISyntaxException, InterruptedException {
+    private StackExchangeResponse getRequest(String url, Map<String, String> params) {
         HttpResponse response = this.http.get(url, params);
-
-        // TODO: Fix decompress
         String decompressedResponse = "";
+        // TODO: Fix decompress
+        try {
+            decompressedResponse = this.decompressGzip(response);
+        } catch (IOException e) {
+            System.out.println("FAILED TO DECOMPRESS RESPONSE... exiting");
+            System.exit(1);
+        }
+
         //String decompressedResponse = this.decompressGzip(response);
         StackExchangeResponse stackExchangeResponse =
                 new Gson().fromJson(decompressedResponse,
@@ -89,7 +94,7 @@ public class StackExchange implements Searchable {
         return stackExchangeResponse;
     }
 
-    private StackExchangeResponse getSearchAdvanced(Map<String, String> params) throws IOException, URISyntaxException, InterruptedException {
+    private StackExchangeResponse getSearchAdvanced(Map<String, String> params) {
         StackExchangeResponse searchResponse = this.getRequest(this.getSearchUrl(), params);
         return searchResponse;
     }
