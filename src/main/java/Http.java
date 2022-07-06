@@ -45,7 +45,6 @@ public final class Http implements RequestSender {
 
         HttpRequest request = HttpRequest.newBuilder().uri(new URI(uri)).GET().build();
 
-
         return request;
     }
 

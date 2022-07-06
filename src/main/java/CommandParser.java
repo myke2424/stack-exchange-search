@@ -27,6 +27,7 @@ public class CommandParser {
         try {
             arguments = parser.parseArgs(args);
         } catch (ArgumentParserException e) {
+            LOGGER.info("Failed to parse arguments");
             parser.handleError(e);
             System.exit(1);
         }

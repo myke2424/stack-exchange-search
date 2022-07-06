@@ -1,3 +1,4 @@
+import model.SearchResult;
 import java.util.List;
 
 public interface Searchable {

@@ -13,11 +13,11 @@ class RedisCache implements Cache {
 
     public RedisCache(String host, int port, String password) {
         this.db = new Jedis(host, port);
-        this.verifyConnection(password);
+        this.authCheck(password);
 
     }
 
-    private void verifyConnection(String password) {
+    private void authCheck(String password) {
         try {
             this.db.auth(password);
         } catch (JedisConnectionException | JedisAccessControlException e) {

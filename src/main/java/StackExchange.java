@@ -1,10 +1,20 @@
 import com.google.gson.Gson;
+import model.Answer;
+import model.Question;
+import model.SearchResult;
+import model.StackExchangeResponse;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
 
 
 public class StackExchange implements Searchable {
@@ -39,15 +49,47 @@ public class StackExchange implements Searchable {
         return answersUrl;
     }
 
-    private StackExchangeResponse getRequest(String url, Map<String, String> params) {
-        String response = this.http.get(url, params);
-        StackExchangeResponse stackExchangeResponse = new Gson().fromJson(response,
-                StackExchangeResponse.class);
+
+    /**
+     * Decompress GZIP Http Response
+     * All Stack Exchange HTTP Responses are compressed with gzip
+     * Read more here: https://api.stackexchange.com/docs/compression
+     *
+     * @param response
+     * @return
+     * @throws IOException
+     */
+    private String decompressGzip(HttpResponse<InputStream> response) throws IOException {
+        var gzip = new GZIPInputStream(response.body());
+
+
+        // Read gzip response stream into buffer
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[4096];
+        int length;
+        while ((length = gzip.read(buffer)) > 0) {
+            outStream.write(buffer, 0, length);
+
+        }
+
+        String bytes = new String(outStream.toByteArray(), "UTF-8");
+        return bytes;
+    }
+
+    private StackExchangeResponse getRequest(String url, Map<String, String> params) throws IOException, URISyntaxException, InterruptedException {
+        HttpResponse response = this.http.get(url, params);
+
+        // TODO: Fix decompress
+        String decompressedResponse = "";
+        //String decompressedResponse = this.decompressGzip(response);
+        StackExchangeResponse stackExchangeResponse =
+                new Gson().fromJson(decompressedResponse,
+                        StackExchangeResponse.class);
 
         return stackExchangeResponse;
     }
 
-    private StackExchangeResponse getSearchAdvanced(Map<String, String> params) {
+    private StackExchangeResponse getSearchAdvanced(Map<String, String> params) throws IOException, URISyntaxException, InterruptedException {
         StackExchangeResponse searchResponse = this.getRequest(this.getSearchUrl(), params);
         return searchResponse;
     }
@@ -127,104 +169,15 @@ class CachedStackExchange implements Searchable {
         this.service = service;
     }
 
-    // Search interface will be the same as the service interface
     @Override
     public List<SearchResult> search(String query, String site, int num) {
         return null;
     }
-}
-
-// TODO: Move data classes into a model directory!?
-// TODO: Move stack exchange class to API dir?
-// TODO: Exclude fields in API response i don't need, i.e. owner, content_lincense etc.
-// TODO: Replace the classs with Records, records are analgous to data classes.
-
-
-class ErrorResponse {
-    public Integer error_id;
-    public String error_message;
-    public String error_name;
-}
-
-
-class Owner {
-    public int account_id;
-    public int reputation;
-    public int user_id;
-    public String user_type;
-    public String profile_image;
-    public String display_name;
-    public String link;
-}
-
-class Item {
-    public Owner owner;
-    public boolean is_accepted;
-    public String body;
-    public int score;
-    public int last_activity_date;
-    public int creation_date;
-    public String accepted_answer_id;
-    public int question_id;
-    public String title;
-    public String link;
-    public String content_license;
-}
-
-
-class StackExchangeResponse {
-    public List<Item> items;
-    public int quota_remaining;
-    public int quota_max;
-    public int backoff;
-    public boolean has_more;
-}
-
-
-class SearchResultItem {
-    public String body;
-    public int score;
-    public int creation_date;
-
-    public SearchResultItem(String body, int score, int creation_date) {
-        this.body = body;
-        this.score = score;
-        this.creation_date = creation_date;
-    }
-}
-
-class Question extends SearchResultItem {
-    public String title;
-    public String link;
-    public String accepted_answer_id;
-
-    public Question(Item item) {
-        super(item.body, item.score, item.creation_date);
-        this.title = item.title;
-        this.link = item.link;
-        this.accepted_answer_id = item.accepted_answer_id;
-    }
-}
-
-class Answer extends SearchResultItem {
-    public boolean is_accepted;
-
-
-    public Answer(Item item) {
-        super(item.body, item.score, item.creation_date);
-        this.is_accepted = item.is_accepted;
-    }
-}
-
-
-class SearchResult {
-    public Question question;
-    public Answer answer;
-
-    public SearchResult(Question question, Answer answer) {
-        this.question = question;
-        this.answer = answer;
-    }
 
 
 }
+
+
+
+
+
