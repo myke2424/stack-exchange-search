@@ -1,6 +1,10 @@
-import java.util.List;
+package stackexchange;
 
-class SearchRequest {
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+public class SearchRequest {
     // required parameters
     private final String query;
 
@@ -8,7 +12,8 @@ class SearchRequest {
     private final List<String> tags;
     private final int num;
     private final String site;
-    private final Boolean accepted;
+    private final String accepted;
+    private final String filter;
 
     private SearchRequest(Builder builder) {
         this.query = builder.query;
@@ -16,6 +21,58 @@ class SearchRequest {
         this.num = builder.num;
         this.site = builder.site;
         this.accepted = builder.accepted;
+        this.filter = builder.filter;
+    }
+
+    public Map<String, String> toJsonMap() {
+        Map<String, String> requestMap = new LinkedHashMap<>() {{
+            put("q", query);
+            put("site", site);
+            put("accepted", accepted);
+            put("filter", filter);
+        }};
+
+        // remove nulls
+        while (requestMap.values().remove(null)) ;
+
+        return requestMap;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public int getNum() {
+        return num;
+    }
+
+    public String getSite() {
+        return site;
+    }
+
+    public String getAccepted() {
+        return accepted;
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+
+    @Override
+    public String toString() {
+        return "SearchRequest{" +
+                "query='" + query + '\'' +
+                ", tags=" + tags +
+                ", num=" + num +
+                ", site='" + site + '\'' +
+                ", accepted='" + accepted + '\'' +
+                ", filter='" + filter + '\'' +
+                '}';
     }
 
     public static class Builder {
@@ -24,12 +81,12 @@ class SearchRequest {
         private List<String> tags;
         private int num;
         private String site;
-        private boolean accepted;
+        private String accepted;
+        private String filter;
 
         public Builder(String query) {
             this.query = query;
-            this.num = 1;
-            this.site = "stackoverflow";
+            this.filter = "withbody"; // Default filter to include response text body
         }
 
 
@@ -49,7 +106,12 @@ class SearchRequest {
         }
 
         public Builder accepted() {
-            this.accepted = true;
+            this.accepted = "True";
+            return this;
+        }
+
+        public Builder filter(String filter) {
+            this.filter = filter;
             return this;
         }
 
