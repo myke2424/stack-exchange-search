@@ -1,3 +1,5 @@
+package stackexchange;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -28,7 +30,7 @@ public final class Http implements RequestSender {
 
         // Manually construct uri with query params
         for (var entry : params.entrySet()) {
-            uri += (entry.getKey() + "=" + entry.getValue().replaceAll("\\s+", ""));
+            uri += (entry.getKey() + "=" + entry.getValue().replaceAll("\\s+", "+"));
             if (i < mapSize - 1) {
                 uri += "&";
             }
