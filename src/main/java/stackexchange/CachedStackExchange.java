@@ -32,7 +32,6 @@ public final class CachedStackExchange implements Searchable {
         String requestUri = Http.buildUri(this.service.getUrl(),
                 request.toJsonMap());
 
-        // Cache request URI
         Optional<String> cachedSearchResultsJson = this.cache.get(requestUri);
         if (cachedSearchResultsJson.isPresent()) {
 
@@ -48,6 +47,8 @@ public final class CachedStackExchange implements Searchable {
         LOGGER.info("Caching request URI: " + requestUri);
         List<SearchResult> searchResults = this.service.search(request);
         String searchResultsJson = gson.toJson(searchResults);
+
+        // Cache request URI -> search results
         this.cache.set(requestUri, searchResultsJson);
 
         return searchResults;

@@ -1,14 +1,13 @@
 package stackexchange;
 
+import stackexchange.config.Config;
 import stackexchange.model.SearchResult;
 
 import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 // TODO Create exceptions folder
-// TODO: Refactor config into object, instead of map.
 // TODO: Refactor Main logic
 public class Main {
     private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
@@ -19,17 +18,12 @@ public class Main {
         var query = args_.getString("query");
         var site = args_.getString("site");
         var interactiveMode = args_.getBoolean("interactive");
-        var config = Config.load(CONFIG_FILE_PATH);
-
-        Map<String, Object> redisConfig = (Map<String, Object>) config.get("redis");
-        String host = (String) redisConfig.get("host");
-        //String port = (String) redisConfig.get("port");
-        int port = 18182;
-        String password = (String) redisConfig.get("password");
+        Config config = Config.fromYaml(CONFIG_FILE_PATH);
 
         RedisCache redis = null;
-        if (host != null && password != null) {
-            redis = new RedisCache(host, port, password);
+        if (config.redis.host != null && config.redis.port != null && config.redis.host != null) {
+            redis = new RedisCache(config.redis.host, config.redis.port,
+                    config.redis.password);
         }
 
         Searchable stackExchange;
