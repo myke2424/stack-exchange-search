@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 // TODO Create exceptions folder
 // TODO: Refactor config into object, instead of map.
+// TODO: Refactor Main logic
 public class Main {
     private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
     private static final String CONFIG_FILE_PATH = "config.yaml";
@@ -21,11 +22,14 @@ public class Main {
         var config = Config.load(CONFIG_FILE_PATH);
 
         Map<String, Object> redisConfig = (Map<String, Object>) config.get("redis");
-        Object host = redisConfig.get("host"), port = redisConfig.get("host"), password = redisConfig.get("password");
+        String host = (String) redisConfig.get("host");
+        //String port = (String) redisConfig.get("port");
+        int port = 18182;
+        String password = (String) redisConfig.get("password");
 
         RedisCache redis = null;
-        if (host != null && port != null && password != null) {
-            redis = new RedisCache((String) host, (int) port, (String) password);
+        if (host != null && password != null) {
+            redis = new RedisCache(host, port, password);
         }
 
         Searchable stackExchange;

@@ -23,7 +23,7 @@ public final class Http implements RequestSender {
         this.client = HttpClient.newHttpClient();
     }
 
-    public String buildUri(String url, Map<String, String> params) {
+    public static String buildUri(String url, Map<String, String> params) {
         String uri = url + "?";
         int i = 0;
         int mapSize = params.size();

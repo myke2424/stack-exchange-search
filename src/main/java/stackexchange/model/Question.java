@@ -13,4 +13,6 @@ public class Question extends SearchResultItem {
         this.link = item.link;
         this.accepted_answer_id = item.accepted_answer_id;
     }
+
+
 }
