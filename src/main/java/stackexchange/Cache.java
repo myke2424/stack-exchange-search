@@ -3,7 +3,7 @@ package stackexchange;
 import java.util.Optional;
 
 /**
- * An interface for a cache keyed by a String with a byte array as data.
+ * An interface for a cache keyed by a String with encoded strings as data.
  */
 public interface Cache {
     /**
