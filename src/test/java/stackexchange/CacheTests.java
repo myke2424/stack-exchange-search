@@ -33,11 +33,11 @@ public class CacheTests {
     }
 }
 
-
+/**
+ * In memory hash-map to simulate a cache
+ */
 class TestCache implements Cache {
-    /**
-     * In memory hash-map to simulate a cache
-     */
+
     private Map<String, String> map = new HashMap<>();
 
 

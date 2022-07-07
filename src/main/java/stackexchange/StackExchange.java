@@ -10,10 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
@@ -40,6 +37,10 @@ public class StackExchange implements Searchable {
 
     public StackExchange() {
         this("2.3");
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     public String getSearchUrl() {
@@ -162,7 +163,7 @@ public class StackExchange implements Searchable {
 
 }
 
-class CachedStackExchange implements Searchable {
+final class CachedStackExchange implements Searchable {
     //  Proxy structural design pattern. Use a cache as a proxy object to set and get search results for faster look up time.
     private final Cache cache;
     private final StackExchange service;
@@ -173,11 +174,23 @@ class CachedStackExchange implements Searchable {
     }
 
     @Override
-    public List<SearchResult> search(String query, String site, int num) {
-        return null;
+    public List<SearchResult> search(SearchRequest request) {
+        Http httpClient = new Http();
+        String requestUri = httpClient.buildUri(this.service.getUrl(),
+                request.toJsonMap());
+
+        // Cache request URI
+        Optional<String> cachedSearchResults = this.cache.get(requestUri);
+        if (cachedSearchResults.isPresent()) {
+            // Deserialize json encoded string into a List of Search Results and return it
+            return null;
+        }
+        // other-wise search and then cache
+        List<SearchResult> searchResults = this.service.search(request);
+        this.cache.set(requestUri, "insert serialized search results");
+
+        return searchResults;
     }
-
-
 }
 
 
