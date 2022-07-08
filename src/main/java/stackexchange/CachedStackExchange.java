@@ -2,6 +2,7 @@ package stackexchange;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import stackexchange.model.SearchRequest;
 import stackexchange.model.SearchResult;
 
 import java.lang.reflect.Type;

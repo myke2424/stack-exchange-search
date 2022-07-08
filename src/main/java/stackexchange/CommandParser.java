@@ -14,15 +14,19 @@ public class CommandParser {
         ArgumentParser parser = ArgumentParsers.newFor("Stack Exchange CLI").build().defaultHelp(true).description("Search stackexchange websites");
 
 
-        parser.addArgument("-q", "--query").required(true).help("Search query used to " + "search a stack exchange website");
+        parser.addArgument("-q", "--query").required(true).help("Search query used to " +
+                "search a stack exchange website");
 
         parser.addArgument("-s", "--site").setDefault("stackoverflow").help("Stack " +
                 "exchange website used to search the query on - default=stackoverflow");
 
-        parser.addArgument("-t", "--tags").help("Tags used in stack exchange search");
+        parser.addArgument("-t", "--tags").help("Space seperated tags used in stack " +
+                "exchange search -" +
+                " " +
+                "Example: --tags='python dictionary recursion'");
 
         parser.addArgument("-i", "--interactive").setDefault(false).help("Interactive " +
-            "search flag, used " +
+                "search flag, used " +
                 "to display search results and allow the user to interactive");
 
         Namespace arguments = null;

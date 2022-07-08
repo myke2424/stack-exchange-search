@@ -1,10 +1,7 @@
 package stackexchange;
 
 import com.google.gson.Gson;
-import stackexchange.model.Answer;
-import stackexchange.model.Question;
-import stackexchange.model.SearchResult;
-import stackexchange.model.StackExchangeResponse;
+import stackexchange.model.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

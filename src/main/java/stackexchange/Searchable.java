@@ -1,5 +1,6 @@
 package stackexchange;
 
+import stackexchange.model.SearchRequest;
 import stackexchange.model.SearchResult;
 
 import java.util.List;

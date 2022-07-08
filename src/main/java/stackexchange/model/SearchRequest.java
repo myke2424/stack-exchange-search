@@ -1,15 +1,14 @@
-package stackexchange;
+package stackexchange.model;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 public class SearchRequest {
     // required parameters
     private final String query;
 
-    // Optional parameters with defaults
-    private final List<String> tags;
+    // Optional parameters
+    private final String tags;
     private final int num;
     private final String site;
     private final String accepted;
@@ -29,6 +28,7 @@ public class SearchRequest {
             put("q", query);
             put("site", site);
             put("accepted", accepted);
+            put("tags", tags);
             put("filter", filter);
         }};
 
@@ -42,7 +42,7 @@ public class SearchRequest {
         return query;
     }
 
-    public List<String> getTags() {
+    public String getTags() {
         return tags;
     }
 
@@ -78,7 +78,7 @@ public class SearchRequest {
     public static class Builder {
         private final String query;
 
-        private List<String> tags;
+        private String tags;
         private int num;
         private String site;
         private String accepted;
@@ -90,7 +90,7 @@ public class SearchRequest {
         }
 
 
-        public Builder tags(List<String> tags) {
+        public Builder tags(String tags) {
             this.tags = tags;
             return this;
         }
