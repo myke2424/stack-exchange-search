@@ -10,61 +10,66 @@ import stackexchange.db.RedisCache;
 import stackexchange.model.SearchRequest;
 import stackexchange.model.SearchResult;
 import stackexchange.util.CommandParser;
+import stackexchange.util.HtmlToMarkdown;
 
 import java.io.FileNotFoundException;
 import java.util.List;
 
-// TODO Create exceptions folder
-// TODO: Refactor Main logic
-// TODO: Test tags functionality, not sure if working correctly
-// TODO: stack exchange requires tags to be semi colon delimited
 public class Main {
   private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
   private static final String CONFIG_FILE_PATH = "config.yaml";
-  private static final int N_RESULTS = 10; // TODO: Add cmd arg for this?
+  private static final int N_RESULTS = 1;
 
-  public static void main(String[] args) throws FileNotFoundException {
+  public static void main(String[] args) {
+    try {
+      run(args);
+    } catch (Exception e) {
+      logger.error(e.getMessage());
+      System.exit(1);
+    }
+  }
+
+  private static void run(String[] args) throws FileNotFoundException {
+    Config config = Config.fromYaml(CONFIG_FILE_PATH);
+    Searchable stackExchange = getStackExchange(config);
+    SearchRequest request = buildRequest(args);
+    List<SearchResult> searchResults = stackExchange.search(request);
+
+    if (searchResults.isEmpty()) {
+      logger.info("No search results found for request: " + request);
+      System.exit(1);
+    }
+
+    SearchResult topResult = searchResults.get(0);
+    printResult(topResult);
+  }
+
+  private static void printResult(SearchResult result) {
+    System.out.println(String.format("***Question Title***: %s \n", result.question.title));
+    System.out.println("***Question Body*** \n");
+    System.out.println(HtmlToMarkdown.parse(result.question.body) + "\n");
+    System.out.println("***Answer Body*** \n \n" + HtmlToMarkdown.parse(result.answer.body));
+  }
+
+  private static SearchRequest buildRequest(String[] args) {
     var args_ = CommandParser.parseArgs(args);
     var query = args_.getString("query");
     var site = args_.getString("site");
     var tags = args_.getString("tags");
-    var interactiveMode = args_.getBoolean("interactive");
-    Config config = Config.fromYaml(CONFIG_FILE_PATH);
-
-    RedisCache redis = null;
-    if (config.redis.host != null && config.redis.port != null && config.redis.host != null) {
-      redis = new RedisCache(config.redis.host, config.redis.port, config.redis.password);
-    }
-
-    Searchable stackExchange;
-
-    if (redis != null) {
-      stackExchange = new CachedStackExchange(redis, new StackExchange());
-    } else {
-      stackExchange = new StackExchange();
-    }
 
     SearchRequest request =
         new SearchRequest.Builder(query).site(site).tags(tags).accepted().num(N_RESULTS).build();
-
-    List<SearchResult> searchResults = stackExchange.search(request);
-
-    if (interactiveMode) {
-      System.out.println("Implement Interactive Search");
-    } else {
-      // Fast search, get the top result
-      // TODO: Raise exception if no search RESULT!?
-      SearchResult topResult = searchResults.get(0);
-
-      System.out.println(String.format("***QUESTION***: %s \n", topResult.question.title));
-      System.out.println(topResult.question.body + "\n");
-
-      System.out.println("***ANSWER*** \n \n" + topResult.answer.body);
-    }
-
-    System.out.println("Done");
+    return request;
   }
 
-  public static void run() {}
+  private static Searchable getStackExchange(Config config) {
+    // If redis configuration is set in config.yaml, cache search requests with proxy obj
+    if (config.redis.host != null && config.redis.port != null && config.redis.host != null) {
+      RedisCache redis =
+          new RedisCache(config.redis.host, config.redis.port, config.redis.password);
+      return new CachedStackExchange(redis, new StackExchange());
+    }
+    return new StackExchange();
+  }
 }
