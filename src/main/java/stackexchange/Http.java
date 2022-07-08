@@ -1,5 +1,8 @@
 package stackexchange;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -7,7 +10,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
-import java.util.logging.Logger;
 
 
 interface RequestSender {
@@ -15,7 +17,7 @@ interface RequestSender {
 }
 
 public final class Http implements RequestSender {
-    private static final Logger LOGGER = Logger.getLogger(Http.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(Http.class);
 
     private HttpClient client;
 
@@ -43,7 +45,7 @@ public final class Http implements RequestSender {
 
     private HttpRequest buildRequest(String url, Map<String, String> params) throws URISyntaxException {
         String uri = this.buildUri(url, params);
-        LOGGER.info(String.format("Making request to URI: %s", uri));
+        logger.info(String.format("Making request to URI: %s", uri));
 
         HttpRequest request = HttpRequest.newBuilder().uri(new URI(uri)).GET().build();
 
@@ -63,8 +65,8 @@ public final class Http implements RequestSender {
             HttpRequest request = this.buildRequest(url, params);
             response = this.sendRequest(request, HttpResponse.BodyHandlers.ofInputStream());
         } catch (Exception e) {
-            System.out.println("FAILED TO MAKE REQUEST");
-            System.out.println(e.getMessage());
+            logger.error("Failed to make request");
+            logger.error(e.getMessage());
             System.exit(1);
         }
 

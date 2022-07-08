@@ -1,19 +1,22 @@
 package stackexchange;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import stackexchange.config.Config;
 import stackexchange.model.SearchRequest;
 import stackexchange.model.SearchResult;
 
 import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.logging.Logger;
+
 
 // TODO Create exceptions folder
 // TODO: Refactor Main logic
 // TODO: Test tags functionality, not sure if working correctly
 // TODO: stack exchange requires tags to be semi colon delimited
 public class Main {
-    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
     private static final String CONFIG_FILE_PATH = "config.yaml";
     private static final int N_RESULTS = 10; // TODO: Add cmd arg for this?
 

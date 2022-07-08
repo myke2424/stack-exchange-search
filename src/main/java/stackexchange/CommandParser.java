@@ -4,11 +4,12 @@ import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.logging.Logger;
 
 public class CommandParser {
-    private static final Logger LOGGER = Logger.getLogger(Http.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(CommandParser.class);
 
     public static Namespace parseArgs(String[] args) {
         ArgumentParser parser = ArgumentParsers.newFor("Stack Exchange CLI").build().defaultHelp(true).description("Search stackexchange websites");
@@ -34,12 +35,12 @@ public class CommandParser {
         try {
             arguments = parser.parseArgs(args);
         } catch (ArgumentParserException e) {
-            LOGGER.info("Failed to parse arguments");
+            logger.error("Failed to parse arguments... Exiting");
             parser.handleError(e);
             System.exit(1);
         }
 
-        LOGGER.info(String.format("Command line arguments: (%s)", arguments.toString()));
+        logger.info(String.format("Command line arguments: (%s)", arguments.toString()));
 
         return arguments;
     }

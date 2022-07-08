@@ -1,6 +1,8 @@
 package stackexchange;
 
 import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import stackexchange.model.*;
 
 import java.io.ByteArrayOutputStream;
@@ -16,6 +18,7 @@ import java.util.zip.GZIPInputStream;
 
 
 public class StackExchange implements Searchable {
+    private static final Logger logger = LoggerFactory.getLogger(StackExchange.class);
     private static final String SEARCH_ENDPOINT = "/search/advanced";
     private static final String ANSWERS_ENDPOINT = "/answers";
 
@@ -85,7 +88,7 @@ public class StackExchange implements Searchable {
         try {
             decompressedResponse = this.decompressGzip(response);
         } catch (IOException e) {
-            System.out.println("FAILED TO DECOMPRESS RESPONSE... exiting");
+            logger.error("FAILED TO DECOMPRESS RESPONSE...exiting ");
             System.exit(1);
         }
 
