@@ -1,14 +1,37 @@
 ## Stack Exchange CLI Search Client
 Search stack exchange websites in your terminal!
 
+## How it works
+Displays the highest up-voted question and top answer for your search request \
+*Inspired by*: https://github.com/chubin/cheat.sh
 
-Generate JAR with dependencies [execute in root dir]
+## Install 
+*Generate JAR with dependencies* 
 ```bash
+# Run inside root directory
 mvn assembly:assembly -DdescriptorId=jar-with-dependencies
 ```
 
-Run the JAR
+## Run Application
 ```bash
-java -jar stack-exchange-cli-1-jar-with-dependencies.jar --query='Merge two dictionaries'
+java -jar se-search-jar-with-dependencies.jar -q="Search Query"
 ```
 
+## Command Line Arguments
+Search query (*required*)
+```bash
+# -q or --query
+java -jar se-search-jar-with-dependencies.jar -q="How to merge two dictionaries"
+```
+
+Stack exchange site (*optional, default=stackoverflow*)
+```bash
+# -s or --s
+java -jar se-search-jar-with-dependencies.jar -q="Big O vs Big Theta" -s="softwareengineering"
+```
+
+Stack exchange tags (*optional)
+```bash
+# -t or --tags
+java -jar se-search-jar-with-dependencies.jar -q="Segmentation fault cause" -t="c c++ rust"
+```

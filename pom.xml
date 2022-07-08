@@ -70,6 +70,7 @@
                             <mainClass>stackexchange.Main</mainClass>
                         </manifest>
                     </archive>
+                    <finalName>se-search</finalName>
                 </configuration>
             </plugin>
         </plugins>
