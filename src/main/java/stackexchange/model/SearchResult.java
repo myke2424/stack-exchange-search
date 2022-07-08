@@ -2,9 +2,7 @@ package stackexchange.model;
 
 // TODO: Should we support answer(s), and comment(s) on this class instead of a
 //  singular answer
-/**
- * Model representation of a question and answer on a stack exchange thread
- */
+/** Model representation of a question and answer on a stack exchange thread */
 public class SearchResult {
     public Question question;
     public Answer answer;

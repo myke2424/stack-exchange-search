@@ -1,8 +1,6 @@
 package stackexchange.model;
 
-/**
- * Model representation of a Stack Exchange Answer
- */
+/** Model representation of a Stack Exchange Answer */
 public class Answer extends StackExchangeEntity {
     public boolean is_accepted;
 

@@ -1,8 +1,6 @@
 package stackexchange.model;
 
-/**
- * Model representation of a Stack Exchange Question
- */
+/** Model representation of a Stack Exchange Question */
 public class Question extends StackExchangeEntity {
     public int id;
     public String title;
