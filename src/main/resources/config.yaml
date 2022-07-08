@@ -1,8 +1,8 @@
 # These are optional fields, if you don't provide stack exchange API credentials,
 # the number of requests will be throttled. Read more here: https://api.stackexchange.com/docs
 api:
-  client_id: null
-  client_secret: null
+  clientId: null
+  clientSecret: null
   key: null
 
 # Optional fields - if you want request caching you can hook up the application to a redis DB.
@@ -12,7 +12,7 @@ redis:
   password: null
 
 logging:
-  log_to_file: false
-  log_filename: stackexchange.log
-  log_level: INFO
+  logToFile: false
+  logFile: stackexchange.log
+  logLevel: INFO
 
