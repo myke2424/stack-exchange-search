@@ -3,6 +3,10 @@ package stackexchange.model;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Model representation of a Stack Exchange Search Request
+ * Using the parameters from: https://api.stackexchange.com/docs/advanced-search
+ */
 public class SearchRequest {
     // required parameters
     private final String query;
@@ -75,6 +79,9 @@ public class SearchRequest {
                 '}';
     }
 
+    /**
+     * Builder pattern will allow all possible combinations of a search request
+     */
     public static class Builder {
         private final String query;
 
