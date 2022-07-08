@@ -1,4 +1,4 @@
-package stackexchange;
+package stackexchange.db;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +8,7 @@ import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.util.Optional;
 
-class RedisCache implements Cache {
+public class RedisCache implements Cache {
     private static final Logger logger = LoggerFactory.getLogger(RedisCache.class);
 
     private final Jedis db;

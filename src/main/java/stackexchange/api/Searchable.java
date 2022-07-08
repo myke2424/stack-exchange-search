@@ -1,4 +1,4 @@
-package stackexchange;
+package stackexchange.api;
 
 import stackexchange.model.SearchRequest;
 import stackexchange.model.SearchResult;

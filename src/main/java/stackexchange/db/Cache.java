@@ -1,4 +1,4 @@
-package stackexchange;
+package stackexchange.db;
 
 import java.util.Optional;
 
