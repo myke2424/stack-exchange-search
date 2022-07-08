@@ -79,11 +79,11 @@ public class StackExchange implements Searchable {
   private StackExchangeResponse getRequest(String url, Map<String, String> params) {
     HttpResponse response = this.http.get(url, params);
     String decompressedResponse = "";
-    // TODO: Fix decompress
+
     try {
       decompressedResponse = this.decompressGzip(response);
     } catch (IOException e) {
-      logger.error("FAILED TO DECOMPRESS RESPONSE...exiting ");
+      logger.error("Failed to decompress GZIP http response... exiting");
       System.exit(1);
     }
 
@@ -134,7 +134,6 @@ public class StackExchange implements Searchable {
     return questions;
   }
 
-  // TODO: Should this take the search builder? Abstraction needs work.
   @Override
   public List<SearchResult> search(SearchRequest request) {
     Map<String, String> searchParams = request.toJsonMap();

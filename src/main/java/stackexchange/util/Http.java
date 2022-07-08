@@ -63,10 +63,8 @@ public final class Http implements RequestSender {
     try {
       HttpRequest request = this.buildRequest(url, params);
       response = this.sendRequest(request, HttpResponse.BodyHandlers.ofInputStream());
-    } catch (Exception e) {
-      logger.error("Failed to make request");
-      logger.error(e.getMessage());
-      System.exit(1);
+    } catch (URISyntaxException | IOException | InterruptedException e) {
+      logger.error("Failed to make request \n" + e.getMessage());
     }
 
     return response;
