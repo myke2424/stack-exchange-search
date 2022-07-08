@@ -7,6 +7,7 @@ import stackexchange.api.Searchable;
 import stackexchange.api.StackExchange;
 import stackexchange.config.Config;
 import stackexchange.db.RedisCache;
+import stackexchange.exception.ZeroSearchResultException;
 import stackexchange.model.SearchRequest;
 import stackexchange.model.SearchResult;
 import stackexchange.util.CommandParser;
@@ -30,7 +31,7 @@ public class Main {
     }
   }
 
-  private static void run(String[] args) throws FileNotFoundException {
+  private static void run(String[] args) throws FileNotFoundException, ZeroSearchResultException {
     Config config = Config.fromYaml(CONFIG_FILE_PATH);
     Searchable stackExchange = getStackExchange(config);
     SearchRequest request = buildRequest(args);
@@ -38,7 +39,7 @@ public class Main {
 
     if (searchResults.isEmpty()) {
       logger.info("No search results found for request: " + request);
-      System.exit(1);
+      throw new ZeroSearchResultException("No search result found");
     }
 
     SearchResult topResult = searchResults.get(0);
