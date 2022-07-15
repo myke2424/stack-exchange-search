@@ -1,6 +1,7 @@
 ## Stack Exchange CLI Search Client
 
 Search stack exchange websites in your terminal!
+Rewritten in python with better terminal output here: https://github.com/myke2424/stack-exchange-cli
 
 ## How it works
 
